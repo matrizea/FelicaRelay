@@ -7,7 +7,9 @@ Two RC-S380.
 # How to use
 Connect RC-S380 to your computer, then replace driver to WinUSB with Zadig (Windows).
 
-Place a card to either Reader. Executing `python relay.py` makes another reader an emulator.
+Place a card to either Reader.
+
+Executing `python relay.py` makes another reader an emulator.
 
 # Replace
 It can replace exchange.
