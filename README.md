@@ -18,10 +18,10 @@ It can replace exchange.
 
 For example, replace UNENCRYPTED decimal data `1000` to `12345`
 
-`python -d 1000 12345`
+`python relay.py -d 1000 12345`
 
 It is as same as
 
-`python -r e803 3930`
+`python relay.py -r e803 3930`
 
 in hex mode.
