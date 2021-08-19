@@ -11,7 +11,7 @@ Place a card to either Reader. Execute via
 
 `python relay.py`
 
-makes another reader to emulator.
+makes another reader a emulator.
 
 # Replace
 It can replace exchange.
