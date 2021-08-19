@@ -27,6 +27,7 @@ print('TIMEOUT', TIMEOUT, 's')
 TIMEOUT_R = TIMEOUT_E = TIMEOUT
 
 REPLACE = args.replace
+REPLACE = REPLACE[0].lower(), REPLACE[1].lower()
 
 if args.replace_decimal:
     do, dn = args.replace_decimal
