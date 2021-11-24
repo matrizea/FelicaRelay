@@ -16,6 +16,8 @@ parser.add_argument('-r', '--replace', nargs=2, metavar=('OLD', 'NEW'),  # actio
                     help='replace exchange')
 parser.add_argument('-d', '--replace-decimal', nargs=2, metavar=('OLD', 'NEW'), type=int,
                     help='replace exchange decimal')
+parser.add_argument('-e', '--replace-text', nargs=2, metavar=('OLD', 'NEW'),
+                    help='replace exchange text')
 parser.add_argument('-s', '--system-code', help='specific system code')
 
 args = parser.parse_args()
@@ -36,6 +38,11 @@ if args.replace_decimal:
     ro = '%02x%02x' % (do % 0x100, do // 0x100)
     rn = '%02x%02x' % (dn % 0x100, dn // 0x100)
     REPLACE = (ro, rn)
+
+REPLACE_TEXT = None
+if args.replace_text:
+    to, tn = args.replace_text
+    REPLACE_TEXT = (to.encode(), tn.encode())
 
 if args.system_code:
     if len(args.system_code) != 4:
@@ -157,6 +164,8 @@ for _ in range(1):
                 if REPLACE[0] in rsp_r.hex():
                     print('Replaced')
                 rsp_r = fromhex(rsp_r.hex().replace(REPLACE[0], REPLACE[1]))
+            if REPLACE_TEXT:
+                rsp_r = rsp_r.replace(REPLACE_TEXT[0], REPLACE_TEXT[1])
 
         except TimeoutError:
             rsp_r = None
