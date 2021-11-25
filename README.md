@@ -23,3 +23,7 @@ It is as same as
 `python relay.py -r e803 3930`
 
 in hex mode.
+
+Also, it supports string replace.
+
+`python relay.py -e ABC DEF`
