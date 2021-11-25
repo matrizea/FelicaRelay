@@ -77,31 +77,37 @@ print('Scanning Devices...')
 
 devices = []
 
-for d in range(1000):
-    device = 'usb:001:' + str(d).zfill(3)
-    try:
-        nfc.ContactlessFrontend(device)
-        devices.append(device)
-        if len(devices) >= 2:
-            break
-    except OSError:
-        pass
-    if d > 100:
+break_ = False
+for b in range(10):
+    for d in range(50):
+        device = f'usb:{b:03d}:{d:03d}'
+        try:
+            nfc.ContactlessFrontend(device)
+            devices.append(device)
+            if len(devices) == 2:
+                break_ = True
+                break
+        except OSError:
+            pass
+    if break_:
         break
 
 print('devices', devices)
 
-if len(devices) < 2:
+if len(devices) == 0:
+    print('No Device')
+    exit(-1)
+
+if len(devices) == 1:
     print('Not Enough Devices')
     exit(-1)
 
-if len(devices) > 2:
-    print('Warning: Exceed Devices')
+assert len(devices) == 2
 
 if nfc.ContactlessFrontend(devices[0]).sense(RemoteTarget("212F")) is None:
-    device_e, device_r = devices[:2]
+    device_e, device_r = devices
 else:
-    device_r, device_e = devices[:2]
+    device_r, device_e = devices
 
 for _ in range(1):
     clf_r = nfc.ContactlessFrontend(device_r)

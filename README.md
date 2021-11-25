@@ -4,6 +4,10 @@ Relay felica exchange.
 # Requirements
 Two RC-S380
 
+Python >=3.6 (just for f-string)
+
+nfcpy
+
 # How to use
 Connect both RC-S380 to your computer, then replace driver to WinUSB with Zadig (on Windows).
 
