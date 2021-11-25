@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser(description='Relay felica exchange.')
 parser.add_argument('-l', '--log', action='store_true',
                     help='show nfc.clf log')
 parser.add_argument('-t', '--timeout', type=float, default=0.005,
-                    help='exchange timeout')
+                    help='exchange timeout (default: 0.005s)')
 parser.add_argument('-r', '--replace', nargs=2, metavar=('OLD', 'NEW'),  # action="append", default=list(),
                     help='replace exchange')
 parser.add_argument('-d', '--replace-decimal', nargs=2, metavar=('OLD', 'NEW'), type=int,
