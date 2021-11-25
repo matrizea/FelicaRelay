@@ -5,7 +5,7 @@ Relay felica exchange.
 Two RC-S380
 
 # How to use
-Connect both RC-S380 to your computer, then replace driver to WinUSB with Zadig (Windows).
+Connect both RC-S380 to your computer, then replace driver to WinUSB with Zadig (on Windows).
 
 Place a card to either Reader.
 
