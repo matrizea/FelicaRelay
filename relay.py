@@ -67,9 +67,6 @@ def disablelogging():
     logging.getLogger("nfc.clf").setLevel(logging_level)
 
 
-if LOG:
-    enablelogging()
-
 
 # Card <-> [ R/W <-> relay <-> Emu ] <-> Reader/Writer
 
@@ -108,6 +105,9 @@ if nfc.ContactlessFrontend(devices[0]).sense(RemoteTarget("212F")) is None:
     device_e, device_r = devices
 else:
     device_r, device_e = devices
+
+if LOG:
+    enablelogging()
 
 for _ in range(1):
     clf_r = nfc.ContactlessFrontend(device_r)
