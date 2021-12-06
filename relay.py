@@ -18,7 +18,8 @@ parser.add_argument('-d', '--replace-decimal', nargs=2, metavar=('OLD', 'NEW'), 
                     help='replace exchange decimal')
 parser.add_argument('-e', '--replace-text', nargs=2, metavar=('OLD', 'NEW'),
                     help='replace exchange text')
-parser.add_argument('-s', '--system-code', help='specific system code')
+parser.add_argument('-s', '--system-code',
+                    help='polling system code (default: FFFF)', default='FFFF')
 
 args = parser.parse_args()
 
@@ -44,13 +45,11 @@ if args.replace_text:
     to, tn = args.replace_text
     REPLACE_TEXT = (to.encode(), tn.encode())
 
-if args.system_code:
-    if len(args.system_code) != 4:
-        print('Illegal System Code')
-        exit(-1)
-    sys_code = int(args.system_code, 16)
-else:
-    sys_code = None
+if len(args.system_code) != 4:
+    print('Illegal System Code')
+    exit(-1)
+
+system_code = int(args.system_code, 16)
 
 
 def enablelogging():
@@ -67,9 +66,7 @@ def disablelogging():
     logging.getLogger("nfc.clf").setLevel(logging_level)
 
 
-
 # Card <-> [ R/W <-> relay <-> Emu ] <-> Reader/Writer
-
 print('Scanning Devices...')
 
 devices = []
@@ -113,11 +110,7 @@ for _ in range(1):
     clf_r = nfc.ContactlessFrontend(device_r)
     clf_e = nfc.ContactlessFrontend(device_e)
 
-    if sys_code:
-        target_r = clf_r.sense(RemoteTarget(
-            "212F", sensf_req=fromhex('00%04x0000' % sys_code)))
-    else:
-        target_r = clf_r.sense(RemoteTarget("212F"))
+    target_r = clf_r.sense(RemoteTarget("212F"))
 
     if target_r is None:
         print('No Card')
@@ -126,15 +119,18 @@ for _ in range(1):
     print('target_r', target_r)
 
     tag_r = nfc.tag.activate(clf_r, target_r)
+
     print('Tag', tag_r)
 
-    idm = tag_r.idm
-    pmm = tag_r.pmm
-    sys_i = tag_r.sys
-    if sys_code:
-        sys_i = sys_code
+    print('Polling to %02x' % system_code)
 
-    sensf_res = b'\x01' + idm + pmm + sys_i.to_bytes(2, "big")
+    idm, pmm, sys = tag_r.polling(system_code=system_code, request_code=1)
+
+    print('idm pmm sys')
+    print(idm.hex(), pmm.hex(), sys.hex())
+
+    sensf_res = b'\x01' + idm + pmm + sys
+
     print('sensf_res', sensf_res.hex())
 
     if LOG:
