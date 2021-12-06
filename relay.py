@@ -75,7 +75,7 @@ print('Scanning Devices...')
 devices = []
 
 break_ = False
-for b in range(10):
+for b in range(1, 10):
     for d in range(50):
         device = f'usb:{b:03d}:{d:03d}'
         try:
