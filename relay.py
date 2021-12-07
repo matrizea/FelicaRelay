@@ -162,7 +162,8 @@ for _ in range(1):
     rsp_e = (len(tt3_cmd) + 1).to_bytes(1, "big") + tt3_cmd
 
     print('Initial Response')
-    print(time(), 'Response from Reader:', rsp_e.hex(), sep='\t')
+    # print(time(), end='\t')
+    print('<<', rsp_e.hex())
 
     idm = int.from_bytes(tag_r.idm, "big")
 
