@@ -169,7 +169,8 @@ for _ in range(1):
     while True:
         try:  # Card <-> my R/W
             rsp_r = clf_r.exchange(rsp_e, TIMEOUT_R)
-            print(time(), 'Response from Card\t', rsp_r.hex(), sep='\t')
+            # print(time(), end='\t')
+            print('>>', rsp_r.hex())
             if REPLACE:
                 if REPLACE[0] in rsp_r.hex():
                     print('Replaced')
@@ -183,7 +184,8 @@ for _ in range(1):
 
         try:  # Emu <-> Reader/Writer
             rsp_e = clf_e.exchange(rsp_r, TIMEOUT_E)
-            print(time(), 'Response from Reader\t', rsp_e.hex(), sep='\t')
+            # print(time(), end='\t')
+            print('<<', rsp_e.hex())
 
         except TimeoutError:
             print('TIMEOUT Reader')
