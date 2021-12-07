@@ -139,6 +139,8 @@ for _ in range(1):
 
     print('sensf_res', sensf_res.hex())
 
+    print('Emulator Start')
+
     if LOG:
         target_e = clf_e.listen(LocalTarget(
             "212F", sensf_res=sensf_res), timeout=60.)
