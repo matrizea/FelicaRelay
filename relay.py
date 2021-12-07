@@ -122,6 +122,12 @@ for _ in range(1):
 
     print('Tag', tag_r)
 
+    if isinstance(tag_r, nfc.tag.tt3_sony.FelicaStandard):
+        print('Request System Code')
+        for sys in tag_r.request_system_code():
+            print('%04x' % sys, end=' ')
+        print()
+
     print('Polling to %02x' % system_code)
 
     idm, pmm, sys = tag_r.polling(system_code=system_code, request_code=1)
