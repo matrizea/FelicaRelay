@@ -24,6 +24,8 @@ parser.add_argument('-e', '--replace-text', nargs=2, metavar=('OLD', 'NEW'),
                     help='replace exchange text')
 parser.add_argument('-s', '--system-code',
                     help='polling system code (default: FFFF)', default='FFFF')
+parser.add_argument('--ignore-polling', action='store_true',
+                    help='ignore reader polling')
 
 args = parser.parse_args()
 
@@ -60,6 +62,9 @@ if len(args.system_code) != 4:
     exit(-1)
 
 system_code = int(args.system_code, 16)
+
+
+IGNORE_POLLING = args.ignore_polling
 
 
 def enablelogging():
@@ -194,9 +199,16 @@ for _ in range(1):
             print('TIMEOUT Card')
 
         try:  # Emu <-> Reader/Writer
-            rsp_e = clf_e.exchange(rsp_r, TIMEOUT_E)
-            # print(time(), end='\t')
-            print('<<', rsp_e.hex())
+            while True:
+                rsp_e = clf_e.exchange(rsp_r, TIMEOUT_E)
+                # print(time(), end='\t')
+                print('<<', rsp_e.hex())
+                if rsp_e[1] == 0:
+                    if IGNORE_POLLING:
+                        print('Ignoring Polling')
+                        rsp_r = None
+                        continue
+                break
 
         except TimeoutError:
             print('TIMEOUT Reader')
