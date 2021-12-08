@@ -12,6 +12,10 @@ parser.add_argument('-l', '--log', action='store_true',
                     help='show nfc.clf log')
 parser.add_argument('-t', '--timeout', type=float, default=0.005,
                     help='exchange timeout (default: 0.005s)')
+parser.add_argument('--timeout-card', type=float,
+                    help='card exchange timeout')
+parser.add_argument('--timeout-reader', type=float,
+                    help='reader exchange timeout')
 parser.add_argument('-r', '--replace', nargs=2, metavar=('OLD', 'NEW'),  # action="append", default=list(),
                     help='replace exchange')
 parser.add_argument('-d', '--replace-decimal', nargs=2, metavar=('OLD', 'NEW'), type=int,
@@ -26,8 +30,14 @@ args = parser.parse_args()
 LOG = args.log
 
 TIMEOUT = args.timeout
-print('TIMEOUT', TIMEOUT, 's')
 TIMEOUT_R = TIMEOUT_E = TIMEOUT
+if args.timeout_card is not None:
+    TIMEOUT_R = args.timeout_card
+print('TIMEOUT CARD', TIMEOUT_R, 's')
+if args.timeout_reader is not None:
+    TIMEOUT_E = args.timeout_reader
+print('TIMEOUT READER', TIMEOUT_E, 's')
+
 
 REPLACE = args.replace
 if REPLACE:
