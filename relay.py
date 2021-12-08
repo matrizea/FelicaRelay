@@ -212,8 +212,11 @@ for _ in range(1):
 
         except TimeoutError:
             print('TIMEOUT Reader')
+            break
+
         except BrokenLinkError:
             print('Exchange Finished')
-            clf_r.close()
-            clf_e.close()
             break
+
+    clf_r.close()
+    clf_e.close()
