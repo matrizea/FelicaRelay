@@ -5,7 +5,8 @@ import argparse
 from time import time
 fromhex = bytearray.fromhex
 
-parser = argparse.ArgumentParser(description='Relay felica exchange.')
+parser = argparse.ArgumentParser(
+    description='Relay felica exchange.', epilog='v2.0')
 
 
 parser.add_argument('-l', '--log', action='store_true',
