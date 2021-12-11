@@ -27,6 +27,10 @@ parser.add_argument('-s', '--system-code',
                     help='polling system code (default: FFFF)', default='FFFF')
 parser.add_argument('--ignore-polling', action='store_true',
                     help='ignore reader polling')
+parser.add_argument('--device-card',
+                    help='card device')
+parser.add_argument('--device-reader',
+                    help='reader device')
 
 args = parser.parse_args()
 
@@ -67,6 +71,14 @@ system_code = int(args.system_code, 16)
 
 IGNORE_POLLING = args.ignore_polling
 
+DEVICE_CARD = args.device_card
+DEVICE_READER = args.device_reader
+
+if DEVICE_CARD or DEVICE_READER:
+    if not (DEVICE_CARD and DEVICE_READER):
+        print('Specific both devices for now')
+        exit(-1)
+
 
 def enablelogging():
     import logging
@@ -83,41 +95,46 @@ def disablelogging():
 
 
 # Card <-> [ R/W <-> relay <-> Emu ] <-> Reader/Writer
-print('Scanning Devices...')
-
-devices = []
-
-break_ = False
-for b in range(1, 10):
-    for d in range(50):
-        device = f'usb:{b:03d}:{d:03d}'
-        try:
-            nfc.ContactlessFrontend(device)
-            devices.append(device)
-            if len(devices) == 2:
-                break_ = True
-                break
-        except OSError:
-            pass
-    if break_:
-        break
-
-print('devices', devices)
-
-if len(devices) == 0:
-    print('No Device')
-    exit(-1)
-
-if len(devices) == 1:
-    print('Not Enough Devices')
-    exit(-1)
-
-assert len(devices) == 2
-
-if nfc.ContactlessFrontend(devices[0]).sense(RemoteTarget("212F")) is None:
-    device_e, device_r = devices
+if DEVICE_CARD or DEVICE_READER:
+    device_r, device_e = DEVICE_CARD, DEVICE_READER
 else:
-    device_r, device_e = devices
+    print('Scanning Devices...')
+
+    devices = []
+
+    break_ = False
+    for b in range(1, 10):
+        for d in range(50):
+            device = f'usb:{b:03d}:{d:03d}'
+            try:
+                nfc.ContactlessFrontend(device)
+                devices.append(device)
+                if len(devices) == 2:
+                    break_ = True
+                    break
+            except OSError:
+                pass
+        if break_:
+            break
+
+    if len(devices) == 0:
+        print('No Device')
+        exit(-1)
+
+    if len(devices) == 1:
+        print('Not Enough Devices')
+        exit(-1)
+
+    assert len(devices) == 2
+
+    if nfc.ContactlessFrontend(devices[0]).sense(RemoteTarget("212F")) is None:
+        device_e, device_r = devices
+    else:
+        device_r, device_e = devices
+
+
+print('DEVICE CARD  ', device_r)
+print('DEVICE READER', device_e)
 
 if LOG:
     enablelogging()
