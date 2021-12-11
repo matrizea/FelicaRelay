@@ -2,6 +2,7 @@ from time import sleep
 import nfc
 from nfc.clf import RemoteTarget, LocalTarget, TimeoutError, BrokenLinkError
 import argparse
+import json
 from time import time
 fromhex = bytearray.fromhex
 
@@ -166,7 +167,8 @@ for _ in range(1):
     idm, pmm, sys = tag_r.polling(system_code=system_code, request_code=1)
 
     print('idm pmm sys')
-    print(idm.hex(), pmm.hex(), sys.hex())
+    print('<>', json.dumps(
+        {'idm': idm.hex(), 'pmm': pmm.hex(), 'sys': sys.hex()}))
 
     sensf_res = b'\x01' + idm + pmm + sys
 
