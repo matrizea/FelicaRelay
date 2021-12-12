@@ -205,14 +205,14 @@ for _ in range(1):
     while True:
         try:  # Card <-> my R/W
             rsp_r = clf_r.exchange(rsp_e, TIMEOUT_R)
-            # print(time(), end='\t')
-            print('>>', rsp_r.hex())
             if REPLACE:
                 if REPLACE[0] in rsp_r.hex():
                     print('Replaced')
                 rsp_r = fromhex(rsp_r.hex().replace(REPLACE[0], REPLACE[1]))
             if REPLACE_TEXT:
                 rsp_r = rsp_r.replace(REPLACE_TEXT[0], REPLACE_TEXT[1])
+            # print(time(), end='\t')
+            print('>>', rsp_r.hex())
 
         except TimeoutError:
             rsp_r = None
