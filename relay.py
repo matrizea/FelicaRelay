@@ -40,13 +40,16 @@ parser.add_argument('--show-time', action='store_true',
 
 args = parser.parse_args()
 
+
 LOG = args.log
+
 
 if len(args.system_code) != 4:
     print('Illegal System Code')
     exit(-1)
 
 system_code = int(args.system_code, 16)
+
 
 TIMEOUT = args.timeout
 TIMEOUT_R = TIMEOUT_E = TIMEOUT
@@ -73,6 +76,7 @@ REPLACE_TEXT = None
 if args.replace_text:
     to, tn = args.replace_text
     REPLACE_TEXT = (to.encode(), tn.encode())
+
 
 DEVICE_CARD = args.device_card
 DEVICE_READER = args.device_reader
