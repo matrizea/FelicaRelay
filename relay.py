@@ -7,7 +7,8 @@ from time import time
 fromhex = bytearray.fromhex
 
 parser = argparse.ArgumentParser(
-    description='Relay felica exchange.', epilog='v2.0')
+    description='Relay felica exchange.', epilog='v2.0',
+    formatter_class=argparse.RawTextHelpFormatter)
 
 
 parser.add_argument('-l', '--log', action='store_true',
@@ -32,6 +33,8 @@ parser.add_argument('--device-card',
                     help='card device')
 parser.add_argument('--device-reader',
                     help='reader device')
+parser.add_argument('--show-time', action='store_true',
+                    help='show command response time\nno compatibility with FelicaReplay')
 
 args = parser.parse_args()
 
@@ -79,6 +82,8 @@ if DEVICE_CARD or DEVICE_READER:
     if not (DEVICE_CARD and DEVICE_READER):
         print('Specific both devices for now')
         exit(-1)
+
+SHOW_TIME = args.show_time
 
 
 def enablelogging():
@@ -197,7 +202,8 @@ for _ in range(1):
     rsp_e = (len(tt3_cmd) + 1).to_bytes(1, "big") + tt3_cmd
 
     print('Initial Response')
-    # print(time(), end='\t')
+    if SHOW_TIME:
+        print(time(), end='\t')
     print('<<', rsp_e.hex())
 
     idm = int.from_bytes(tag_r.idm, "big")
@@ -211,7 +217,8 @@ for _ in range(1):
                 rsp_r = fromhex(rsp_r.hex().replace(REPLACE[0], REPLACE[1]))
             if REPLACE_TEXT:
                 rsp_r = rsp_r.replace(REPLACE_TEXT[0], REPLACE_TEXT[1])
-            # print(time(), end='\t')
+            if SHOW_TIME:
+                print(time(), end='\t')
             print('>>', rsp_r.hex())
 
         except TimeoutError:
@@ -221,7 +228,8 @@ for _ in range(1):
         try:  # Emu <-> Reader/Writer
             while True:
                 rsp_e = clf_e.exchange(rsp_r, TIMEOUT_E)
-                # print(time(), end='\t')
+                if SHOW_TIME:
+                    print(time(), end='\t')
                 print('<<', rsp_e.hex())
                 if rsp_e[1] == 0:
                     if IGNORE_POLLING:
