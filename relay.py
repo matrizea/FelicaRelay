@@ -35,6 +35,8 @@ parser.add_argument('--device-reader',
                     help='reader device')
 parser.add_argument('--show-time', action='store_true',
                     help='show command response time\nno compatibility with FelicaReplay')
+parser.add_argument('--block-write-response', action='store_true',
+                    help='block card write response')
 
 args = parser.parse_args()
 
@@ -84,6 +86,9 @@ if DEVICE_CARD or DEVICE_READER:
         exit(-1)
 
 SHOW_TIME = args.show_time
+
+
+BLOCK_WRITE_RESPONSE = args.block_write_response
 
 
 def enablelogging():
@@ -220,6 +225,11 @@ for _ in range(1):
             if SHOW_TIME:
                 print(time(), end='\t')
             print('>>', rsp_r.hex())
+
+            if BLOCK_WRITE_RESPONSE:
+                if rsp_r[1] == 0x17:
+                    print('Blocking Write Response')
+                    rsp_r = None
 
         except TimeoutError:
             rsp_r = None
