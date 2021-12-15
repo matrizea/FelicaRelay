@@ -241,8 +241,8 @@ for _ in range(1):
                 if SHOW_TIME:
                     print(time(), end='\t')
                 print('<<', rsp_e.hex())
-                if rsp_e[1] == 0:
-                    if IGNORE_POLLING:
+                if IGNORE_POLLING:
+                    if rsp_e[1] == 0x00:
                         print('Ignoring Polling')
                         rsp_r = None
                         continue
