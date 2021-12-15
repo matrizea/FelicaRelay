@@ -13,6 +13,8 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('-l', '--log', action='store_true',
                     help='show nfc.clf log')
+parser.add_argument('-s', '--system-code',
+                    help='polling system code (default: FFFF)', default='FFFF')
 parser.add_argument('-t', '--timeout', type=float, default=0.005,
                     help='exchange timeout (default: 0.005s)')
 parser.add_argument('--timeout-card', type=float,
@@ -25,22 +27,26 @@ parser.add_argument('-d', '--replace-decimal', nargs=2, metavar=('OLD', 'NEW'), 
                     help='replace exchange decimal')
 parser.add_argument('-e', '--replace-text', nargs=2, metavar=('OLD', 'NEW'),
                     help='replace exchange text')
-parser.add_argument('-s', '--system-code',
-                    help='polling system code (default: FFFF)', default='FFFF')
-parser.add_argument('--ignore-polling', action='store_true',
-                    help='ignore reader polling')
 parser.add_argument('--device-card',
                     help='card device')
 parser.add_argument('--device-reader',
                     help='reader device')
-parser.add_argument('--show-time', action='store_true',
-                    help='show command response time\nno compatibility with FelicaReplay')
+parser.add_argument('--ignore-polling', action='store_true',
+                    help='ignore reader polling')
 parser.add_argument('--block-write-response', action='store_true',
                     help='block card write response')
+parser.add_argument('--show-time', action='store_true',
+                    help='show command response time\nno compatibility with FelicaReplay')
 
 args = parser.parse_args()
 
 LOG = args.log
+
+if len(args.system_code) != 4:
+    print('Illegal System Code')
+    exit(-1)
+
+system_code = int(args.system_code, 16)
 
 TIMEOUT = args.timeout
 TIMEOUT_R = TIMEOUT_E = TIMEOUT
@@ -68,15 +74,6 @@ if args.replace_text:
     to, tn = args.replace_text
     REPLACE_TEXT = (to.encode(), tn.encode())
 
-if len(args.system_code) != 4:
-    print('Illegal System Code')
-    exit(-1)
-
-system_code = int(args.system_code, 16)
-
-
-IGNORE_POLLING = args.ignore_polling
-
 DEVICE_CARD = args.device_card
 DEVICE_READER = args.device_reader
 
@@ -85,10 +82,13 @@ if DEVICE_CARD or DEVICE_READER:
         print('Specific both devices for now')
         exit(-1)
 
-SHOW_TIME = args.show_time
 
+IGNORE_POLLING = args.ignore_polling
 
 BLOCK_WRITE_RESPONSE = args.block_write_response
+
+
+SHOW_TIME = args.show_time
 
 
 def enablelogging():
