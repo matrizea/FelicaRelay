@@ -58,10 +58,10 @@ TIMEOUT = args.timeout
 TIMEOUT_R = TIMEOUT_E = TIMEOUT
 if args.timeout_card is not None:
     TIMEOUT_R = args.timeout_card
-print('TIMEOUT CARD  ', TIMEOUT_R, 's')
+print('TIMEOUT CARD\t', TIMEOUT_R, 's')
 if args.timeout_reader is not None:
     TIMEOUT_E = args.timeout_reader
-print('TIMEOUT READER', TIMEOUT_E, 's')
+print('TIMEOUT READER\t', TIMEOUT_E, 's')
 
 
 REPLACE = args.replace
@@ -163,8 +163,8 @@ else:
         device_r, device_e = devices
 
 
-print('DEVICE CARD  ', device_r)
-print('DEVICE READER', device_e)
+print('DEVICE CARD\t', device_r)
+print('DEVICE READER\t', device_e)
 
 if LOG:
     enablelogging()
