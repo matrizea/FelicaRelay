@@ -8,7 +8,7 @@ from time import time
 fromhex = bytearray.fromhex
 
 parser = argparse.ArgumentParser(
-    description='Relay felica exchange.', epilog='v2.1',
+    description='Relay felica exchange.', epilog='v2.2',
     formatter_class=argparse.RawTextHelpFormatter)
 
 
