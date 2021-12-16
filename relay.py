@@ -12,19 +12,19 @@ parser = argparse.ArgumentParser(
 
 
 parser.add_argument('-l', '--log', action='store_true',
-                    help='show nfc.clf log')
+                    help='show nfc.clf log (debug)')
 parser.add_argument('-s', '--system-code',
                     help='polling system code (default: FFFF)', default='FFFF')
 parser.add_argument('-t', '--timeout', type=float, default=0.005,
-                    help='exchange timeout (default: 0.005s)')
+                    help='exchange timeout [s] (default: 0.005s)')
 parser.add_argument('--timeout-card', type=float,
-                    help='card exchange timeout')
+                    help='card exchange timeout [s]')
 parser.add_argument('--timeout-reader', type=float,
-                    help='reader exchange timeout')
+                    help='reader exchange timeout [s]')
 parser.add_argument('-r', '--replace', nargs=2, metavar=('OLD', 'NEW'),  # action="append", default=list(),
-                    help='replace exchange')
+                    help='replace exchange hex')
 parser.add_argument('-d', '--replace-decimal', nargs=2, metavar=('OLD', 'NEW'), type=int,
-                    help='replace exchange decimal')
+                    help='replace exchange decimal (2byte little endian)')
 parser.add_argument('-e', '--replace-text', nargs=2, metavar=('OLD', 'NEW'),
                     help='replace exchange text')
 parser.add_argument('--device-card',
