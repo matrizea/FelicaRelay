@@ -2,6 +2,7 @@ from time import sleep
 import nfc
 from nfc.clf import RemoteTarget, LocalTarget, TimeoutError, BrokenLinkError
 import argparse
+import usb1 as libusb
 import json
 from time import time
 fromhex = bytearray.fromhex
@@ -31,6 +32,8 @@ parser.add_argument('--device-card',
                     help='card device')
 parser.add_argument('--device-reader',
                     help='reader device')
+parser.add_argument('--fast-device-detection', action='store_true',
+                    help='an experimental feature')
 parser.add_argument('--ignore-polling', action='store_true',
                     help='ignore reader polling')
 parser.add_argument('--block-write-response', action='store_true',
@@ -86,6 +89,8 @@ if DEVICE_CARD or DEVICE_READER:
         print('Specific both devices for now')
         exit(-1)
 
+FAST_DEVICE_DETECTION = args.fast_device_detection
+
 
 IGNORE_POLLING = args.ignore_polling
 
@@ -113,24 +118,30 @@ def disablelogging():
 if DEVICE_CARD or DEVICE_READER:
     device_r, device_e = DEVICE_CARD, DEVICE_READER
 else:
-    print('Scanning Devices...')
+    if FAST_DEVICE_DETECTION:
+        with libusb.USBContext() as context:
+            devices = ['usb:%03x:%03x' % (d.getBusNumber(), d.getDeviceAddress())
+                       for d in context.getDeviceList(skip_on_error=True)
+                       if d.getVendorID() == 0x054c and d.getProductID() in (0x06c1, 0x06c3)]
+    else:
+        print('Scanning Devices...')
 
-    devices = []
+        devices = []
 
-    break_ = False
-    for b in range(1, 10):
-        for d in range(50):
-            device = f'usb:{b:03d}:{d:03d}'
-            try:
-                nfc.ContactlessFrontend(device)
-                devices.append(device)
-                if len(devices) == 2:
-                    break_ = True
-                    break
-            except OSError:
-                pass
-        if break_:
-            break
+        break_ = False
+        for b in range(1, 10):
+            for d in range(50):
+                device = f'usb:{b:03d}:{d:03d}'
+                try:
+                    nfc.ContactlessFrontend(device)
+                    devices.append(device)
+                    if len(devices) == 2:
+                        break_ = True
+                        break
+                except OSError:
+                    pass
+            if break_:
+                break
 
     if len(devices) == 0:
         print('No Device')
@@ -138,6 +149,10 @@ else:
 
     if len(devices) == 1:
         print('Not Enough Devices')
+        exit(-1)
+
+    if len(devices) > 2:
+        print('Exceed devices')
         exit(-1)
 
     assert len(devices) == 2
