@@ -2,6 +2,8 @@
 
 Relay felica exchange.
 
+![image](img/image.png)
+
 # Requirements
 
 Two RC-S380
