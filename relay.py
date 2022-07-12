@@ -8,7 +8,7 @@ from time import time
 fromhex = bytearray.fromhex
 
 parser = argparse.ArgumentParser(
-    description='Relay felica exchange.', epilog='v2.2',
+    description='Relay felica exchange.', epilog='v2.3',
     formatter_class=argparse.RawTextHelpFormatter)
 
 
@@ -28,6 +28,8 @@ parser.add_argument('-d', '--replace-decimal', nargs=2, metavar=('OLD', 'NEW'), 
                     help='replace exchange decimal (2byte little endian)')
 parser.add_argument('-e', '--replace-text', nargs=2, metavar=('OLD', 'NEW'),
                     help='replace exchange text')
+parser.add_argument('-c', '--continue-emulation', action='store_true',
+                    help='continue emulation after exchange termination')
 parser.add_argument('--device-card',
                     help='card device')
 parser.add_argument('--device-reader',
@@ -35,9 +37,11 @@ parser.add_argument('--device-reader',
 parser.add_argument('--fast-device-detection', action='store_true',
                     help='an experimental feature')
 parser.add_argument('--ignore-polling', action='store_true',
-                    help='ignore reader polling')
+                    help='ignore Polling command')
+parser.add_argument('--ignore-write-v2', action='store_true',
+                    help='ignore Write v2 command')
 parser.add_argument('--block-write-response', action='store_true',
-                    help='block card write response')
+                    help='block Write response')
 parser.add_argument('--show-time', action='store_true',
                     help='show command response time\nno compatibility with FelicaReplay')
 
@@ -80,6 +84,7 @@ if args.replace_text:
     to, tn = args.replace_text
     REPLACE_TEXT = (to.encode(), tn.encode())
 
+CONTINUE_EMULATION = args.continue_emulation
 
 DEVICE_CARD = args.device_card
 DEVICE_READER = args.device_reader
@@ -93,6 +98,7 @@ FAST_DEVICE_DETECTION = args.fast_device_detection
 
 
 IGNORE_POLLING = args.ignore_polling
+IGNORE_WRITE_V2 = args.ignore_write_v2
 
 BLOCK_WRITE_RESPONSE = args.block_write_response
 
@@ -169,7 +175,7 @@ print('DEVICE READER\t', device_e)
 if LOG:
     enablelogging()
 
-for _ in range(1):
+while True:
     clf_r = nfc.ContactlessFrontend(device_r)
     clf_e = nfc.ContactlessFrontend(device_e)
 
@@ -262,7 +268,12 @@ for _ in range(1):
                 print('<<', rsp_e.hex())
                 if IGNORE_POLLING:
                     if rsp_e[1] == 0x00:
-                        print('Ignoring Polling')
+                        print('Ignoring Polling Command')
+                        rsp_r = None
+                        continue
+                if IGNORE_WRITE_V2:
+                    if rsp_e[1] == 0x46:
+                        print('Ignoring Write v2 Command')
                         rsp_r = None
                         continue
                 break
@@ -277,3 +288,5 @@ for _ in range(1):
 
     clf_r.close()
     clf_e.close()
+    if not CONTINUE_EMULATION:
+        break
